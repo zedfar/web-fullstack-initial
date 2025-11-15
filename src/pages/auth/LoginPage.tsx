@@ -12,19 +12,58 @@ export default function LoginPage() {
         username: "",
         password: "",
     });
+    const [errors, setErrors] = useState({
+        username: "",
+        password: "",
+    });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setForm({ ...form, [name]: value });
+        // Clear error when user types
+        if (errors[name as keyof typeof errors]) {
+            setErrors({ ...errors, [name]: "" });
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = {
+            username: "",
+            password: "",
+        };
+
+        let isValid = true;
+
+        // Username validation
+        if (!form.username.trim()) {
+            newErrors.username = "Username is required";
+            isValid = false;
+        } else if (form.username.length < 3) {
+            newErrors.username = "Username must be at least 3 characters";
+            isValid = false;
+        }
+
+        // Password validation
+        if (!form.password) {
+            newErrors.password = "Password is required";
+            isValid = false;
+        } else if (form.password.length < 6) {
+            newErrors.password = "Password must be at least 6 characters";
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validasi
-        if (!form.username.trim() || !form.password.trim()) {
-            toast.error("Please fill in all fields");
+        // Validate form
+        if (!validateForm()) {
+            toast.error("Please fix the errors in the form");
             return;
         }
 
@@ -96,9 +135,16 @@ export default function LoginPage() {
                                     onChange={handleChange}
                                     placeholder="Enter your username"
                                     autoComplete="username"
-                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
+                                    className={`w-full px-4 py-3 rounded-lg border ${
+                                        errors.username
+                                            ? "border-red-500 focus:ring-red-500"
+                                            : "border-slate-300 dark:border-slate-600 focus:ring-amber-500 dark:focus:ring-amber-600"
+                                    } bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
                                     disabled={loading}
                                 />
+                                {errors.username && (
+                                    <p className="text-sm text-red-600 dark:text-red-400">{errors.username}</p>
+                                )}
                             </div>
 
                             {/* Password */}
@@ -118,7 +164,11 @@ export default function LoginPage() {
                                         onChange={handleChange}
                                         placeholder="Enter your password"
                                         autoComplete="current-password"
-                                        className="w-full px-4 py-3 pr-12 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
+                                        className={`w-full px-4 py-3 pr-12 rounded-lg border ${
+                                            errors.password
+                                                ? "border-red-500 focus:ring-red-500"
+                                                : "border-slate-300 dark:border-slate-600 focus:ring-amber-500 dark:focus:ring-amber-600"
+                                        } bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
                                         disabled={loading}
                                     />
                                     <button
@@ -135,6 +185,9 @@ export default function LoginPage() {
                                         )}
                                     </button>
                                 </div>
+                                {errors.password && (
+                                    <p className="text-sm text-red-600 dark:text-red-400">{errors.password}</p>
+                                )}
                             </div>
                         </div>
 

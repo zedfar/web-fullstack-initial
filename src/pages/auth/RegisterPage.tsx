@@ -14,39 +14,98 @@ export default function RegisterPage() {
         password: "",
         confirmPassword: "",
     });
+    const [errors, setErrors] = useState({
+        email: "",
+        username: "",
+        full_name: "",
+        password: "",
+        confirmPassword: "",
+    });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setForm({ ...form, [name]: value });
+        // Clear error when user types
+        if (errors[name as keyof typeof errors]) {
+            setErrors({ ...errors, [name]: "" });
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = {
+            email: "",
+            username: "",
+            full_name: "",
+            password: "",
+            confirmPassword: "",
+        };
+
+        let isValid = true;
+
+        // Email validation
+        if (!form.email.trim()) {
+            newErrors.email = "Email is required";
+            isValid = false;
+        } else {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(form.email)) {
+                newErrors.email = "Please enter a valid email address";
+                isValid = false;
+            }
+        }
+
+        // Username validation
+        if (!form.username.trim()) {
+            newErrors.username = "Username is required";
+            isValid = false;
+        } else if (form.username.length < 3) {
+            newErrors.username = "Username must be at least 3 characters";
+            isValid = false;
+        } else if (!/^[a-zA-Z0-9_]+$/.test(form.username)) {
+            newErrors.username = "Username can only contain letters, numbers, and underscores";
+            isValid = false;
+        }
+
+        // Full name validation
+        if (!form.full_name.trim()) {
+            newErrors.full_name = "Full name is required";
+            isValid = false;
+        } else if (form.full_name.trim().length < 3) {
+            newErrors.full_name = "Full name must be at least 3 characters";
+            isValid = false;
+        }
+
+        // Password validation
+        if (!form.password) {
+            newErrors.password = "Password is required";
+            isValid = false;
+        } else if (form.password.length < 6) {
+            newErrors.password = "Password must be at least 6 characters";
+            isValid = false;
+        }
+
+        // Confirm password validation
+        if (!form.confirmPassword) {
+            newErrors.confirmPassword = "Please confirm your password";
+            isValid = false;
+        } else if (form.password !== form.confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match";
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validasi
-        if (!form.email.trim() || !form.username.trim() || !form.full_name.trim() || !form.password.trim()) {
-            toast.error("Please fill in all fields");
-            return;
-        }
-
-        // Validasi email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(form.email)) {
-            toast.error("Please enter a valid email address");
-            return;
-        }
-
-        // Validasi password minimal 6 karakter
-        if (form.password.length < 6) {
-            toast.error("Password must be at least 6 characters");
-            return;
-        }
-
-        // Validasi password match
-        if (form.password !== form.confirmPassword) {
-            toast.error("Passwords do not match");
+        // Validate form
+        if (!validateForm()) {
+            toast.error("Please fix the errors in the form");
             return;
         }
 
@@ -123,9 +182,16 @@ export default function RegisterPage() {
                                     onChange={handleChange}
                                     placeholder="Enter your email"
                                     autoComplete="email"
-                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
+                                    className={`w-full px-4 py-3 rounded-lg border ${
+                                        errors.email
+                                            ? "border-red-500 focus:ring-red-500"
+                                            : "border-slate-300 dark:border-slate-600 focus:ring-amber-500 dark:focus:ring-amber-600"
+                                    } bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
                                     disabled={loading}
                                 />
+                                {errors.email && (
+                                    <p className="text-sm text-red-600 dark:text-red-400">{errors.email}</p>
+                                )}
                             </div>
 
                             {/* Username */}
@@ -144,9 +210,16 @@ export default function RegisterPage() {
                                     onChange={handleChange}
                                     placeholder="Choose a username"
                                     autoComplete="username"
-                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
+                                    className={`w-full px-4 py-3 rounded-lg border ${
+                                        errors.username
+                                            ? "border-red-500 focus:ring-red-500"
+                                            : "border-slate-300 dark:border-slate-600 focus:ring-amber-500 dark:focus:ring-amber-600"
+                                    } bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
                                     disabled={loading}
                                 />
+                                {errors.username && (
+                                    <p className="text-sm text-red-600 dark:text-red-400">{errors.username}</p>
+                                )}
                             </div>
 
                             {/* Full Name */}
@@ -165,9 +238,16 @@ export default function RegisterPage() {
                                     onChange={handleChange}
                                     placeholder="Enter your full name"
                                     autoComplete="name"
-                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
+                                    className={`w-full px-4 py-3 rounded-lg border ${
+                                        errors.full_name
+                                            ? "border-red-500 focus:ring-red-500"
+                                            : "border-slate-300 dark:border-slate-600 focus:ring-amber-500 dark:focus:ring-amber-600"
+                                    } bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
                                     disabled={loading}
                                 />
+                                {errors.full_name && (
+                                    <p className="text-sm text-red-600 dark:text-red-400">{errors.full_name}</p>
+                                )}
                             </div>
 
                             {/* Password */}
@@ -187,7 +267,11 @@ export default function RegisterPage() {
                                         onChange={handleChange}
                                         placeholder="Create a password (min. 6 characters)"
                                         autoComplete="new-password"
-                                        className="w-full px-4 py-3 pr-12 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
+                                        className={`w-full px-4 py-3 pr-12 rounded-lg border ${
+                                            errors.password
+                                                ? "border-red-500 focus:ring-red-500"
+                                                : "border-slate-300 dark:border-slate-600 focus:ring-amber-500 dark:focus:ring-amber-600"
+                                        } bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
                                         disabled={loading}
                                     />
                                     <button
@@ -204,6 +288,9 @@ export default function RegisterPage() {
                                         )}
                                     </button>
                                 </div>
+                                {errors.password && (
+                                    <p className="text-sm text-red-600 dark:text-red-400">{errors.password}</p>
+                                )}
                             </div>
 
                             {/* Confirm Password */}
@@ -223,7 +310,11 @@ export default function RegisterPage() {
                                         onChange={handleChange}
                                         placeholder="Confirm your password"
                                         autoComplete="new-password"
-                                        className="w-full px-4 py-3 pr-12 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
+                                        className={`w-full px-4 py-3 pr-12 rounded-lg border ${
+                                            errors.confirmPassword
+                                                ? "border-red-500 focus:ring-red-500"
+                                                : "border-slate-300 dark:border-slate-600 focus:ring-amber-500 dark:focus:ring-amber-600"
+                                        } bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:border-transparent transition-all`}
                                         disabled={loading}
                                     />
                                     <button
@@ -240,6 +331,9 @@ export default function RegisterPage() {
                                         )}
                                     </button>
                                 </div>
+                                {errors.confirmPassword && (
+                                    <p className="text-sm text-red-600 dark:text-red-400">{errors.confirmPassword}</p>
+                                )}
                             </div>
                         </div>
 
