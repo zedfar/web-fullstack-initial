@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { productService } from '@/services/productService';
 import type { Product } from '@/types/product.types';
 import { Search, Loader2, ShoppingBag } from 'lucide-react';
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState('');
@@ -125,13 +127,14 @@ export default function HomePage() {
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-200"
+                  onClick={() => navigate(`/products/${product.id}`)}
+                  className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all overflow-hidden border border-gray-200 cursor-pointer hover:scale-[1.02] duration-200"
                 >
                   {/* Product Image */}
                   <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
                     {true ? (
                       <img
-                        src={product.image_url || "https://loremflickr.com/cache/resized/7299_10644576196_35cbffdc9b_z_600_400_nofilter.jpg"}
+                        src={product.image_url || "https://picsum.photos/seed/book/600/400"}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />

@@ -74,10 +74,10 @@ export const ProductDetail = () => {
             {error || 'Product not found'}
           </p>
           <button
-            onClick={() => navigate('/admin/dashboard')}
+            onClick={() => navigate('/dashboard')}
             className="text-orange-500 hover:text-orange-600 font-medium"
           >
-            ← Back to Dashboard
+            ← Kembali ke Katalog
           </button>
         </div>
       </div>
@@ -112,7 +112,7 @@ export const ProductDetail = () => {
             {/* Main Image */}
             <div className="relative w-full aspect-[414/378] rounded-xl overflow-hidden bg-gray-100">
               <img
-                src={productImages[selectedImage] || '/placeholder-product.png'}
+                src={productImages[selectedImage] || 'https://picsum.photos/seed/book/600/400'}
                 alt={product.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
