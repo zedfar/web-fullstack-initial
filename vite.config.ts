@@ -3,19 +3,36 @@ import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
-  server: {
-    port: 5093,
-    open: true,
-  },
-  resolve: {
-    alias: {
-      "@": "/src",
+export default defineConfig(({ mode }) => {
+  const isProd = mode === "production";
+
+  return {
+    plugins: [react(), tsconfigPaths()],
+    base: "/",
+    server: {
+      port: 5093,
+      open: true,
     },
-  },
-  build: {
-    outDir: "dist",
-    sourcemap: true,
-  },
+
+    resolve: {
+      alias: {
+        "@": "/src",
+      },
+    },
+
+    build: {
+      outDir: "dist",
+
+      // dev = true, staging = true, prod = false
+      sourcemap: !isProd,
+
+      // rolldown-vite minify options (replaces esbuild.drop)
+      minify: "esbuild",
+      minifyOptions: isProd
+        ? {
+          drop: ["console", "debugger"],
+        }
+        : {},
+    },
+  };
 });
