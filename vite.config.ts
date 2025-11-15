@@ -22,17 +22,8 @@ export default defineConfig(({ mode }) => {
 
     build: {
       outDir: "dist",
-
-      // dev = true, staging = true, prod = false
       sourcemap: !isProd,
-
-      // rolldown-vite minify options (replaces esbuild.drop)
-      minify: "esbuild",
-      minifyOptions: isProd
-        ? {
-          drop: ["console", "debugger"],
-        }
-        : {},
+      minify: isProd,
     },
   };
 });

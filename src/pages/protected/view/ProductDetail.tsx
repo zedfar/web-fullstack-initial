@@ -56,7 +56,7 @@ export const ProductDetail = () => {
   // Loading State
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+      <div className="flex items-center justify-center min-h-screen pt-[60px]">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading product details...</p>
@@ -68,13 +68,13 @@ export const ProductDetail = () => {
   // Error State
   if (error || !product) {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+      <div className="flex items-center justify-center min-h-screen pt-[60px]">
         <div className="text-center">
           <p className="text-lg font-medium text-gray-900 mb-2">
             {error || 'Product not found'}
           </p>
           <button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/home')}
             className="text-orange-500 hover:text-orange-600 font-medium"
           >
             ← Kembali ke Katalog
@@ -93,9 +93,9 @@ export const ProductDetail = () => {
   ].filter(Boolean);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-gray-50 min-h-screen">
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-20 py-10">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-20 pt-[80px] pb-10">
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
@@ -112,7 +112,7 @@ export const ProductDetail = () => {
             {/* Main Image */}
             <div className="relative w-full aspect-[414/378] rounded-xl overflow-hidden bg-gray-100">
               <img
-                src={productImages[selectedImage] || 'https://picsum.photos/seed/book/600/400'}
+                src={product.image_url || 'https://picsum.photos/seed/book/600/400'}
                 alt={product.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {

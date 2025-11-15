@@ -12,7 +12,7 @@ export default function PublicRoute({ children }: PublicRouteProps) {
     if (isAuthenticated && user) {
         const redirectPath = user.role?.name === "admin" 
             ? "/admin/dashboard" 
-            : "/dashboard";
+            : "/home";
         
         return <Navigate to={redirectPath} replace />;
     }

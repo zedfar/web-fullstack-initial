@@ -8,8 +8,9 @@ import NotFound from "@/pages/NotFoundPage";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
 import UserPage from "@/pages/protected/admin/UserPage";
-import HomePage from "@/pages/protected/view/HomePage";
 import { ProductDetail } from "@/pages/protected/view/ProductDetail";
+import { ProductPage } from "@/pages/protected/view/ProductPage";
+import { HomePageProducts } from "@/pages/protected/view/HomePageV2";
 
 const router = createBrowserRouter([
   // Public Routes (tanpa Layout)
@@ -44,7 +45,8 @@ const router = createBrowserRouter([
       {
         element: <Layout />,
         children: [
-          { path: "/dashboard", element: <HomePage /> },
+          { path: "/home", element: <HomePageProducts /> },
+          { path: "/products", element: <ProductPage /> }, // All products page with filters
           { path: "/products/:id", element: <ProductDetail /> }, // Product detail route
           // Tambahkan route user lainnya di sini
         ],
