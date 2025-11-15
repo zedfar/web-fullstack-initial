@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { useAuthStore } from "@/store/auth";
 import { authService } from "@/services/authService";
 import { toast } from "react-hot-toast";
-import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react";
+import { Eye, EyeOff, UserPlus, Loader2 } from "lucide-react";
 
-export default function LoginPage() {
+export default function RegisterPage() {
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
+        email: "",
         username: "",
+        full_name: "",
         password: "",
+        confirmPassword: "",
     });
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,28 +26,52 @@ export default function LoginPage() {
         e.preventDefault();
 
         // Validasi
-        if (!form.username.trim() || !form.password.trim()) {
+        if (!form.email.trim() || !form.username.trim() || !form.full_name.trim() || !form.password.trim()) {
             toast.error("Please fill in all fields");
+            return;
+        }
+
+        // Validasi email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(form.email)) {
+            toast.error("Please enter a valid email address");
+            return;
+        }
+
+        // Validasi password minimal 6 karakter
+        if (form.password.length < 6) {
+            toast.error("Password must be at least 6 characters");
+            return;
+        }
+
+        // Validasi password match
+        if (form.password !== form.confirmPassword) {
+            toast.error("Passwords do not match");
             return;
         }
 
         setLoading(true);
 
         try {
-            // Login via authService (sudah handle setTokens & fetchUser)
-            const response = await authService.login(form);
+            // Register via authService
+            const response = await authService.register({
+                email: form.email,
+                username: form.username,
+                full_name: form.full_name,
+                password: form.password,
+            });
 
             const user = response.metadata;
             const roleName = user?.role?.name;
 
-            toast.success(`Welcome back, ${user.full_name || user.username}!`);
+            toast.success(`Welcome, ${user.full_name || user.username}!`);
 
             // Navigate berdasarkan role
             navigate(roleName === "admin" ? "/admin/dashboard" : "/home");
         } catch (err: any) {
-            const errorMessage = err?.response?.data?.message || err?.message || "Login failed";
+            const errorMessage = err?.response?.data?.message || err?.message || "Registration failed";
             toast.error(errorMessage);
-            console.error("Login error:", err);
+            console.error("Registration error:", err);
         } finally {
             setLoading(false);
         }
@@ -74,12 +101,33 @@ export default function LoginPage() {
                                 LOQO
                             </h1>
                             <p className="text-slate-600 dark:text-slate-400 text-sm">
-                                Sign in to your account
+                                Create your account
                             </p>
                         </div>
 
                         {/* Form Fields */}
                         <div className="space-y-4">
+                            {/* Email */}
+                            <div className="space-y-2">
+                                <label
+                                    htmlFor="email"
+                                    className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                >
+                                    Email
+                                </label>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                    placeholder="Enter your email"
+                                    autoComplete="email"
+                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
+                                    disabled={loading}
+                                />
+                            </div>
+
                             {/* Username */}
                             <div className="space-y-2">
                                 <label
@@ -94,8 +142,29 @@ export default function LoginPage() {
                                     type="text"
                                     value={form.username}
                                     onChange={handleChange}
-                                    placeholder="Enter your username"
+                                    placeholder="Choose a username"
                                     autoComplete="username"
+                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
+                                    disabled={loading}
+                                />
+                            </div>
+
+                            {/* Full Name */}
+                            <div className="space-y-2">
+                                <label
+                                    htmlFor="full_name"
+                                    className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                >
+                                    Full Name
+                                </label>
+                                <input
+                                    id="full_name"
+                                    name="full_name"
+                                    type="text"
+                                    value={form.full_name}
+                                    onChange={handleChange}
+                                    placeholder="Enter your full name"
+                                    autoComplete="name"
                                     className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
                                     disabled={loading}
                                 />
@@ -116,8 +185,8 @@ export default function LoginPage() {
                                         type={showPassword ? "text" : "password"}
                                         value={form.password}
                                         onChange={handleChange}
-                                        placeholder="Enter your password"
-                                        autoComplete="current-password"
+                                        placeholder="Create a password (min. 6 characters)"
+                                        autoComplete="new-password"
                                         className="w-full px-4 py-3 pr-12 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
                                         disabled={loading}
                                     />
@@ -136,6 +205,42 @@ export default function LoginPage() {
                                     </button>
                                 </div>
                             </div>
+
+                            {/* Confirm Password */}
+                            <div className="space-y-2">
+                                <label
+                                    htmlFor="confirmPassword"
+                                    className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                >
+                                    Confirm Password
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        value={form.confirmPassword}
+                                        onChange={handleChange}
+                                        placeholder="Confirm your password"
+                                        autoComplete="new-password"
+                                        className="w-full px-4 py-3 pr-12 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-600 focus:border-transparent transition-all"
+                                        disabled={loading}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1"
+                                        disabled={loading}
+                                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showConfirmPassword ? (
+                                            <EyeOff className="w-5 h-5" />
+                                        ) : (
+                                            <Eye className="w-5 h-5" />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Submit Button */}
@@ -147,26 +252,26 @@ export default function LoginPage() {
                             {loading ? (
                                 <>
                                     <Loader2 className="w-5 h-5 animate-spin" />
-                                    <span>Signing in...</span>
+                                    <span>Creating account...</span>
                                 </>
                             ) : (
                                 <>
-                                    <LogIn className="w-5 h-5" />
-                                    <span>Sign In</span>
+                                    <UserPlus className="w-5 h-5" />
+                                    <span>Create Account</span>
                                 </>
                             )}
                         </button>
 
-                        {/* Link to Register */}
+                        {/* Link to Login */}
                         <div className="text-center text-sm text-slate-500 dark:text-slate-400">
-                            Don't have an account?{" "}
+                            Already have an account?{" "}
                             <button
                                 type="button"
-                                onClick={() => navigate("/register")}
+                                onClick={() => navigate("/login")}
                                 className="text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 font-semibold transition-colors"
                                 disabled={loading}
                             >
-                                Create one
+                                Sign in
                             </button>
                         </div>
                     </form>

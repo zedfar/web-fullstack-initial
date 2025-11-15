@@ -22,6 +22,7 @@ export const ProductPage = () => {
   const [searchInput, setSearchInput] = useState(searchParams.get('search') || '');
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [priceRangeInput, setPriceRangeInput] = useState<{ min: string; max: string }>({ min: '', max: '' });
   const [priceRange, setPriceRange] = useState<{ min: string; max: string }>({ min: '', max: '' });
   const [selectedStockStatus, setSelectedStockStatus] = useState<string>('');
   const [sortBy, setSortBy] = useState<'created_at' | 'price' | 'name' | 'satus'>('created_at');
@@ -55,6 +56,16 @@ export const ProductPage = () => {
 
     return () => clearTimeout(timer);
   }, [searchInput]);
+
+  // Debounce price range
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPriceRange(priceRangeInput);
+      setCurrentPage(1); // Reset to first page on price filter change
+    }, 800); // Slightly longer delay for price input
+
+    return () => clearTimeout(timer);
+  }, [priceRangeInput]);
 
   // Fetch products
   const fetchProducts = async (signal?: AbortSignal) => {
@@ -116,6 +127,7 @@ export const ProductPage = () => {
     setSearchInput('');
     setSearchQuery('');
     setSelectedCategory('');
+    setPriceRangeInput({ min: '', max: '' });
     setPriceRange({ min: '', max: '' });
     setSelectedStockStatus('');
     setSortBy('created_at');
@@ -246,15 +258,15 @@ export const ProductPage = () => {
                   <input
                     type="number"
                     placeholder="Harga minimum"
-                    value={priceRange.min}
-                    onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
+                    value={priceRangeInput.min}
+                    onChange={(e) => setPriceRangeInput({ ...priceRangeInput, min: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                   <input
                     type="number"
                     placeholder="Harga maksimum"
-                    value={priceRange.max}
-                    onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
+                    value={priceRangeInput.max}
+                    onChange={(e) => setPriceRangeInput({ ...priceRangeInput, max: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
@@ -598,15 +610,15 @@ export const ProductPage = () => {
                     <input
                       type="number"
                       placeholder="Harga minimum"
-                      value={priceRange.min}
-                      onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
+                      value={priceRangeInput.min}
+                      onChange={(e) => setPriceRangeInput({ ...priceRangeInput, min: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
                     <input
                       type="number"
                       placeholder="Harga maksimum"
-                      value={priceRange.max}
-                      onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
+                      value={priceRangeInput.max}
+                      onChange={(e) => setPriceRangeInput({ ...priceRangeInput, max: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
                   </div>
