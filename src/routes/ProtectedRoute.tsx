@@ -61,7 +61,7 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
 
   // Check admin access
   if (requireAdmin && user.role?.name !== "admin") {
-    return <Navigate to="/view/dashboard" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   // return <>{children}</>;

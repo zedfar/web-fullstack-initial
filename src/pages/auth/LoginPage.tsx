@@ -40,7 +40,7 @@ export default function LoginPage() {
             toast.success(`Welcome back, ${user.full_name || user.username}!`);
 
             // Navigate berdasarkan role
-            navigate(roleName === "admin" ? "/admin/dashboard" : "/view/dashboard");
+            navigate(roleName === "admin" ? "/admin/dashboard" : "/dashboard");
         } catch (err: any) {
             const errorMessage = err?.response?.data?.message || err?.message || "Login failed";
             toast.error(errorMessage);

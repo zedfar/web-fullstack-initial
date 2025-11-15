@@ -7,7 +7,7 @@ export const AdminRoute = () => {
   
 
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role?.name !== "admin") return <Navigate to="/view/dashboard" replace />;
+  if (user.role?.name !== "admin") return <Navigate to="/dashboard" replace />;
 
   return <Outlet />;
 };

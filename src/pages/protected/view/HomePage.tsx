@@ -129,9 +129,9 @@ export default function HomePage() {
                 >
                   {/* Product Image */}
                   <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
-                    {product.image_url ? (
+                    {true ? (
                       <img
-                        src={product.image_url}
+                        src={product.image_url || "https://loremflickr.com/cache/resized/7299_10644576196_35cbffdc9b_z_600_400_nofilter.jpg"}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />

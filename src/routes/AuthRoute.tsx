@@ -10,7 +10,7 @@ export const AuthRoute = () => {
     if (isAuthenticated) {
         return user?.role?.name === "admin"
             ? <Navigate to="/admin/dashboard" replace />
-            : <Navigate to="/view/dashboard" replace />;
+            : <Navigate to="/dashboard" replace />;
     }
 
     return <Outlet />;

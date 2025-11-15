@@ -18,14 +18,14 @@ export const Layout = () => {
   // Role-based menu items
   const menuItems = isAdmin
     ? [
-        { icon: Package, label: 'Products', onClick: () => navigate("/admin/dashboard") },
-        { icon: Users, label: 'Users', onClick: () => navigate("/admin/users") },
-        { icon: Settings, label: 'Setting', onClick: () => console.log('Setting') },
-        { icon: LogOut, label: 'Logout', onClick: handleLogout, isDanger: true },
-      ]
+      { icon: Package, label: 'Products', onClick: () => navigate("/admin/dashboard") },
+      { icon: Users, label: 'Users', onClick: () => navigate("/admin/users") },
+      { icon: Settings, label: 'Setting', onClick: () => console.log('Setting') },
+      { icon: LogOut, label: 'Logout', onClick: handleLogout, isDanger: true },
+    ]
     : [
-        { icon: LogOut, label: 'Logout', onClick: handleLogout, isDanger: true },
-      ];
+      { icon: LogOut, label: 'Logout', onClick: handleLogout, isDanger: true },
+    ];
 
   useEffect(() => {
     if (notification) {
@@ -67,10 +67,9 @@ export const Layout = () => {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center space-x-2 hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors"
               >
-                <ChevronDown 
-                  className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${
-                    isDropdownOpen ? 'rotate-180' : ''
-                  }`} 
+                <ChevronDown
+                  className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''
+                    }`}
                 />
                 <span className="text-gray-900 font-medium">{user?.username}</span>
               </button>
@@ -98,9 +97,8 @@ export const Layout = () => {
                           item.onClick();
                           setIsDropdownOpen(false);
                         }}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors ${
-                          item.isDanger ? 'text-red-600 hover:bg-red-50' : 'text-gray-700'
-                        }`}
+                        className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors ${item.isDanger ? 'text-red-600 hover:bg-red-50' : 'text-gray-700'
+                          }`}
                       >
                         <item.icon className="w-5 h-5" />
                         <span className="font-medium">{item.label}</span>
@@ -121,25 +119,31 @@ export const Layout = () => {
 
       {/* Toast Notification */}
       {showNotification && (
-        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-5">
-          <div className="bg-green-500 text-white rounded-lg shadow-lg overflow-hidden max-w-sm">
-            {/* Toast Header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-green-600">
-              <strong className="font-semibold">New Product Added!</strong>
+        <div className="fixed top-6 right-6 z-50 animate-in fade-in slide-in-from-top-5 duration-300">
+          <div className="bg-green-500/95 backdrop-blur-sm text-white rounded-2xl shadow-xl shadow-black/20 max-w-sm overflow-hidden border border-green-400/40">
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 bg-green-600/60 backdrop-blur-sm">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-base">New Product Added</span>
+              </div>
+
               <button
                 onClick={() => setShowNotification(false)}
-                className="text-white hover:text-green-100 transition-colors"
+                className="text-white/80 hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
-            {/* Toast Body */}
-            <div className="px-4 py-3">
+
+            {/* Body */}
+            <div className="px-5 py-4 bg-green-50 text-green-900">
               {notification && (
                 <>
-                  <strong className="block text-lg">{notification.data.name}</strong>
-                  <p className="mt-1">
+                  <strong className="block text-lg font-semibold">
+                    {notification.data.name}
+                  </strong>
+                  <p className="mt-1 text-sm font-medium">
                     Price: Rp {notification.data.price.toLocaleString('id-ID')}
                   </p>
                 </>
@@ -148,6 +152,7 @@ export const Layout = () => {
           </div>
         </div>
       )}
+
 
       {/* Auto-hide notification after 5 seconds */}
       {showNotification && (
