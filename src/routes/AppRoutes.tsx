@@ -7,7 +7,7 @@ import TesPage from "@/pages/protected/admin/TestPage";
 import NotFound from "@/pages/NotFoundPage";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
-import { UserPage } from "@/pages/protected/admin/UserPage";
+import UserPage from "@/pages/protected/admin/UserPage";
 import HomePage from "@/pages/protected/view/HomePage";
 
 const router = createBrowserRouter([
